@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecatalog/bloc/login/login_bloc.dart';
+import 'package:flutter_ecatalog/data/datasources/local_datasource.dart';
 import 'package:flutter_ecatalog/data/model/request/login_request_model.dart';
 import 'package:flutter_ecatalog/presentation/home_page.dart';
+import 'package:flutter_ecatalog/presentation/register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,6 +19,23 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
 
   bool isObsecured = true;
+
+  @override
+  void initState() {
+    checkAuth();
+    super.initState();
+  }
+
+  void checkAuth() async {
+    final token = await LocalDatasource().getToken();
+    if (token.isNotEmpty) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +94,8 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   }
                   if (state is LoginStateSuccess) {
+                    LocalDatasource()
+                        .saveToken(state.responseModel.accessToken!);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Login Success'),
@@ -103,6 +124,19 @@ class _LoginPageState extends State<LoginPage> {
                     child: const Text('Login'),
                   );
                 },
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const RegisterPage();
+                      },
+                    ),
+                  );
+                },
+                child: const Text('Register here..'),
               ),
             ],
           ),

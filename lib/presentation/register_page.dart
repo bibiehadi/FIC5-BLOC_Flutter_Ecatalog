@@ -137,7 +137,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   );
                 },
                 child: const Text('Have an account? Login here..'),
-              )
+              ),
             ],
           ),
         ),

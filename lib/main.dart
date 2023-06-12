@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecatalog/bloc/login/login_bloc.dart';
+import 'package:flutter_ecatalog/bloc/products/products_bloc.dart';
 import 'package:flutter_ecatalog/bloc/register/register_bloc.dart';
 import 'package:flutter_ecatalog/data/datasources/auth_datasource.dart';
-import 'package:flutter_ecatalog/presentation/register_page.dart';
+import 'package:flutter_ecatalog/data/datasources/product_datasource.dart';
+import 'package:flutter_ecatalog/presentation/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +25,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<LoginBloc>(
           create: (context) => LoginBloc(AuthDatasource()),
         ),
+        BlocProvider<ProductsBloc>(
+          create: (context) => ProductsBloc(ProductDatasource()),
+        )
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -38,7 +43,7 @@ class MyApp extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.blue,
         ),
-        home: const RegisterPage(),
+        home: const LoginPage(),
       ),
     );
   }
