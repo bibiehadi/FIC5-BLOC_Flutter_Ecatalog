@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecatalog/bloc/add_product/add_product_bloc.dart';
 import 'package:flutter_ecatalog/bloc/products/products_bloc.dart';
 import 'package:flutter_ecatalog/data/datasources/local_datasource.dart';
+import 'package:flutter_ecatalog/data/model/request/add_product_request_model.dart';
 import 'package:flutter_ecatalog/data/model/response/products_response_model.dart';
 import 'package:flutter_ecatalog/presentation/login_page.dart';
 
@@ -178,9 +180,51 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 actions: [
-                  IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close))
+                  ElevatedButton(
+                    onPressed: () {
+                      AddProductRequestModel requestModel =
+                          AddProductRequestModel(
+                              title: titleController.text,
+                              price: int.parse(priceController.text),
+                              description: descController.text);
+                      context.read<AddProductBloc>().add(
+                            DoAddProductEvent(requestModel: requestModel),
+                          );
+                    },
+                    child: BlocConsumer<AddProductBloc, AddProductState>(
+                      listener: (context, state) {
+                        if (state is AddProductStateError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                        if (state is AddProductStateSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Add Product Success'),
+                              backgroundColor: Colors.blue,
+                            ),
+                          );
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is AddProductStateLoading) {
+                          return const CircularProgressIndicator();
+                        }
+                        return const Text('Add');
+                      },
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
                 ],
               );
             },

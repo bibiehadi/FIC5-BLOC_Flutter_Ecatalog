@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter_ecatalog/data/model/request/add_product_request_model.dart';
+import 'package:flutter_ecatalog/data/model/response/add_product_response_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_ecatalog/data/model/response/products_response_model.dart';
 
