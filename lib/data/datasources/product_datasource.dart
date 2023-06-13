@@ -7,7 +7,34 @@ import 'package:flutter_ecatalog/data/model/response/products_response_model.dar
 class ProductDatasource {
   Future<Either<String, List<ProductsResponseModel>>> getListProduct() async {
     final response = await http.get(
-      Uri.parse('https://api.escuelajs.co/api/v1/products/'),
+      Uri.parse('https://api.escuelajs.co/api/v1/products?offset=0&limit=10'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return Right(
+        List<ProductsResponseModel>.from(
+          jsonDecode(response.body).map(
+            (data) => ProductsResponseModel.fromMap(data),
+          ),
+        ),
+      );
+    } else {
+      return const Left('Get Product Failed');
+    }
+  }
+
+  Future<Either<String, List<ProductsResponseModel>>> loadMoreProduct(
+      int page, int limit) async {
+    final response = await http.get(
+      Uri.parse(
+          'https://api.escuelajs.co/api/v1/products?offset=$page&limit=$limit'),
+      headers: {
+        "Content-Type": "application/json",
+      },
     );
 
     if (response.statusCode == 200) {

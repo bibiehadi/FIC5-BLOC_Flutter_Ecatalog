@@ -10,4 +10,9 @@ class LocalDatasource {
     final preferences = await SharedPreferences.getInstance();
     return preferences.getString('token') ?? '';
   }
+
+  Future<void> removeToken() async {
+    final prefrences = await SharedPreferences.getInstance();
+    prefrences.remove('token');
+  }
 }

@@ -20,9 +20,35 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
           ProductsStateError(message: error),
         ),
         (result) => emit(
-          ProductsStateSuccess(listProduct: result),
+          ProductsStateSuccess(
+              listProduct: result,
+              page: 1,
+              size: 10,
+              hasMore: result.length > 10),
         ),
       );
     });
+
+    on<LoadMoreProductEvent>(
+      (event, emit) async {
+        // emit(ProductsStateLoading());
+        print('load more');
+        print(event.limit!);
+        final result = await datasource.loadMoreProduct(
+            event.page! * event.limit!, event.limit!);
+        result.fold(
+          (error) => emit(
+            ProductsStateError(message: error),
+          ),
+          (result) => emit(
+            ProductsStateSuccess(
+                listProduct: event.listProduct + result,
+                page: event.page! + 1,
+                size: event.page! * event.limit!,
+                hasMore: result.length > event.limit!),
+          ),
+        );
+      },
+    );
   }
 }
