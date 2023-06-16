@@ -41,6 +41,7 @@ class ProductDatasource {
 
     if (response.statusCode == 200) {
       print(response.body);
+      print(response.body);
       return Right(
         List<ProductsResponseModel>.from(
           jsonDecode(response.body).map(
