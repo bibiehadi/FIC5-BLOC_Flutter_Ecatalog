@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecatalog/bloc/add_product/add_product_bloc.dart';
 import 'package:flutter_ecatalog/bloc/login/login_bloc.dart';
+import 'package:flutter_ecatalog/bloc/product/product_bloc.dart';
 import 'package:flutter_ecatalog/bloc/products/products_bloc.dart';
 import 'package:flutter_ecatalog/bloc/register/register_bloc.dart';
+import 'package:flutter_ecatalog/bloc/update_product/update_product_bloc.dart';
 import 'package:flutter_ecatalog/data/datasources/add_product_datasource.dart';
 import 'package:flutter_ecatalog/data/datasources/auth_datasource.dart';
 import 'package:flutter_ecatalog/data/datasources/product_datasource.dart';
+import 'package:flutter_ecatalog/data/datasources/update_product_datasource.dart';
 import 'package:flutter_ecatalog/presentation/login_page.dart';
 
 void main() {
@@ -29,8 +32,14 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProductsBloc>(
           create: (context) => ProductsBloc(ProductDatasource()),
         ),
+        BlocProvider<ProductBloc>(
+          create: (context) => ProductBloc(ProductDatasource()),
+        ),
         BlocProvider<AddProductBloc>(
           create: (context) => AddProductBloc(AddProductDatasource()),
+        ),
+        BlocProvider<UpdateProductBloc>(
+          create: (context) => UpdateProductBloc(UpdateProductDatasource()),
         ),
       ],
       child: MaterialApp(

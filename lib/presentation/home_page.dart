@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_ecatalog/bloc/add_product/add_product_bloc.dart';
+import 'package:flutter_ecatalog/bloc/product/product_bloc.dart';
 import 'package:flutter_ecatalog/bloc/products/products_bloc.dart';
 import 'package:flutter_ecatalog/data/datasources/local_datasource.dart';
-import 'package:flutter_ecatalog/data/model/request/add_product_request_model.dart';
 import 'package:flutter_ecatalog/data/model/response/products_response_model.dart';
+import 'package:flutter_ecatalog/presentation/add_product_page.dart';
 import 'package:flutter_ecatalog/presentation/login_page.dart';
+import 'package:flutter_ecatalog/presentation/product_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,9 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController descController = TextEditingController();
   final scrollController = ScrollController();
   List<ProductsResponseModel> listProduct = [];
 
@@ -68,73 +66,84 @@ class _HomePageState extends State<HomePage> {
                   ),
                   itemCount: listProduct.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: const [
-                          BoxShadow(
-                            blurRadius: 4,
-                            color: Color(0x3600000F),
-                            offset: Offset(0, 2),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Expanded(
-                                    child: ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(8),
-                                      topRight: Radius.circular(8)),
-                                  child: Image.network(
-                                    listProduct[index].images!.first,
-                                    width: 125,
-                                    height: 125,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ))
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  0, 2, 0, 0),
-                              child: Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    8, 4, 0, 0),
-                                child: Text(
-                                  listProduct[index].title ?? '',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  0, 2, 0, 0),
-                              child: Row(
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProductPage(id: listProduct[index].id!),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: const [
+                            BoxShadow(
+                              blurRadius: 4,
+                              color: Color(0x3600000F),
+                              offset: Offset(0, 2),
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Padding(
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            8, 4, 0, 0),
-                                    child: Text(
-                                        '\$ ${listProduct[index].price.toString()}'),
-                                  ),
+                                  Expanded(
+                                      child: ClipRRect(
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        topRight: Radius.circular(8)),
+                                    child: Image.network(
+                                      listProduct[index].images!.first,
+                                      width: 125,
+                                      height: 125,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ))
                                 ],
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    0, 2, 0, 0),
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      8, 4, 0, 0),
+                                  child: Text(
+                                    listProduct[index].title ?? '',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    0, 2, 0, 0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8, 4, 0, 0),
+                                      child: Text(
+                                          '\$ ${listProduct[index].price.toString()}'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -148,86 +157,12 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text('Add Product'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      decoration: const InputDecoration(labelText: 'Title'),
-                      controller: titleController,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(labelText: 'Price'),
-                      controller: priceController,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Description',
-                      ),
-                      maxLines: 4,
-                      controller: descController,
-                    ),
-                  ],
-                ),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      AddProductRequestModel requestModel =
-                          AddProductRequestModel(
-                              title: titleController.text,
-                              price: int.parse(priceController.text),
-                              description: descController.text);
-                      context.read<AddProductBloc>().add(
-                            DoAddProductEvent(requestModel: requestModel),
-                          );
-                    },
-                    child: BlocConsumer<AddProductBloc, AddProductState>(
-                      listener: (context, state) {
-                        if (state is AddProductStateError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.message),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                        if (state is AddProductStateSuccess) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Add Product Success'),
-                              backgroundColor: Colors.blue,
-                            ),
-                          );
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      builder: (context, state) {
-                        if (state is AddProductStateLoading) {
-                          return const CircularProgressIndicator();
-                        }
-                        return const Text('Add');
-                      },
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                ],
-              );
-            },
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return const AddProductPage();
+              },
+            ),
           );
         },
         child: const Icon(Icons.add),
